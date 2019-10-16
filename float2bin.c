@@ -22,7 +22,7 @@
 
 void float2bin(double, char*, char*, int, int);
 
-void main (void) {
+int main (void) {
     FILE *p_read_file;
     char *read_file_name;
     double *p_float;
@@ -49,8 +49,8 @@ void main (void) {
     char *write_file_name;
     char *bin_int;
     char *bin_dec;
-    char array_bin_int[8];
-    char array_bin_dec[8];
+    char array_bin_int[DIGIT_INT_N];
+    char array_bin_dec[DIGIT_DEC_N];
 
     bin_int = &array_bin_int[0];
     bin_dec = &array_bin_dec[0];
@@ -58,14 +58,16 @@ void main (void) {
     write_file_name = "out.dat";
     p_write_file = fopen(write_file_name,"w");
 
-        for (int i=0;i<256;i++) {
-            float2bin(*p_float, bin_int, bin_dec, DIGIT_DEC_N, DIGIT_INT_N);
+        for (int i=0;i<DATA_LENGTH;i++) {
+            float2bin(*p_float, bin_int, bin_dec, DIGIT_INT_N, DIGIT_DEC_N);
             fputs(bin_int, p_write_file);
             fputs(bin_dec, p_write_file);
             fputs("\n", p_write_file);
             p_float++;
         }
     fclose(p_write_file);
+
+    return 0;
 }
 
 void float2bin (double data_float, char *bin_int, char *bin_dec, int digit_int, int digit_dec) {
