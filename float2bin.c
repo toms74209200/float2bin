@@ -49,8 +49,8 @@ int main (void) {
     char *write_file_name;
     char *bin_int;
     char *bin_dec;
-    char array_bin_int[DIGIT_INT_N];
-    char array_bin_dec[DIGIT_DEC_N];
+    char array_bin_int[DIGIT_INT_N+1];
+    char array_bin_dec[DIGIT_DEC_N+1];
 
     bin_int = &array_bin_int[0];
     bin_dec = &array_bin_dec[0];
@@ -81,11 +81,16 @@ void float2bin (double data_float, char *bin_int, char *bin_dec, int digit_int, 
 
     if (digit_int == 0) {
         ;
+    } else if (digit_int == 1) {
+        mask = 0x1U;
+        *bin_int = (mask&n) ? '1' : '0';
+        bin_int++;
     } else {
         for (mask=(0x1U<<(digit_int-1)); mask>0; mask>>=1) {
             *(bin_int++) = (mask&n) ? '1' : '0';
         }
     }
+    *bin_int = '\0';
     if (digit_dec == 0) {
         ;
     } else {
@@ -96,8 +101,8 @@ void float2bin (double data_float, char *bin_int, char *bin_dec, int digit_int, 
             } else {
                 *bin_dec = '0';
             }
-            if (i < digit_dec)
-                bin_dec++;
+            bin_dec++;
         }
     }
+    *bin_dec = '\0';
 }
