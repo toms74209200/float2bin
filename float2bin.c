@@ -26,7 +26,8 @@ int main (void) {
     FILE *p_read_file;
     char *read_file_name;
     double *p_float;
-    double array_float[DATA_LENGTH];
+    double array_float[256];
+    int data_length;
 
     p_float = &array_float[0];
 
@@ -36,9 +37,11 @@ int main (void) {
         printf("Error: cannot open file(%s)\n", read_file_name);
         exit(1);
     } else {
-        for (int i=0;i<DATA_LENGTH;i++) {
+        data_length = 0;
+        while (feof(p_read_file)==0) {
             fscanf(p_read_file, "%lf", p_float);
             p_float++;
+            data_length++;
         }
     }
     fclose(p_read_file);
@@ -58,7 +61,7 @@ int main (void) {
     write_file_name = "out.dat";
     p_write_file = fopen(write_file_name,"w");
 
-        for (int i=0;i<DATA_LENGTH;i++) {
+        for (int i=0;i<data_length;i++) {
             float2bin(*p_float, bin_int, bin_dec, DIGIT_INT_N, DIGIT_DEC_N);
             fputs(bin_int, p_write_file);
             fputs(bin_dec, p_write_file);
