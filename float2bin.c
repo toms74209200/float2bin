@@ -16,53 +16,66 @@
 #include <stdio.h>
 #include <math.h>
 
-#define DATA_LENGTH 256
-#define DIGIT_INT_N 8
-#define DIGIT_DEC_N 8
+#define INIT_DATA_LENGTH 16
 
 void float2bin(double, char*, char*, int, int);
 
-int main (void) {
+int main (int argc, char *argv[]) {
+    int digit_int_n;
+    int digit_dec_n;
+
     FILE *p_read_file;
     char *read_file_name;
     double *p_float;
-    double array_float[256];
     int data_length;
+    int data_array_size;
 
-    p_float = &array_float[0];
+    if (argc <= 1) {
+        printf("Error: no file specified.\n");
+        return 0;
+    }
+    read_file_name = argv[1];
 
-    read_file_name="test.dat";
+    p_float = (double *)malloc(INIT_DATA_LENGTH*sizeof(double *));
+
+    printf("Integer digits : ");
+    scanf("%d", &digit_int_n);
+    printf("Decimal digits : ");
+    scanf("%d", &digit_dec_n);
 
     if ((p_read_file = fopen(read_file_name,"r")) == NULL) {
-        printf("Error: cannot open file(%s)\n", read_file_name);
+        printf("Error: cannot open file(%s).\n", read_file_name);
         exit(1);
     } else {
         data_length = 0;
-        while (feof(p_read_file)==0) {
-            fscanf(p_read_file, "%lf", p_float);
-            p_float++;
-            data_length++;
+        data_array_size = INIT_DATA_LENGTH;
+        while (feof(p_read_file) == 0) {
+            fscanf(p_read_file, "%lf", &p_float[data_length++]);
+            if (data_length > data_array_size) {
+                data_array_size <<= 1;
+                p_float = realloc(p_float, data_array_size*sizeof(double *));
+            }
         }
     }
     fclose(p_read_file);
-
-    p_float = &array_float[0];
 
     FILE *p_write_file;
     char *write_file_name;
     char *bin_int;
     char *bin_dec;
-    char array_bin_int[DIGIT_INT_N+1];
-    char array_bin_dec[DIGIT_DEC_N+1];
 
-    bin_int = &array_bin_int[0];
-    bin_dec = &array_bin_dec[0];
+    bin_int = (char *)malloc(digit_int_n);
+    bin_dec = (char *)malloc(digit_dec_n);
 
-    write_file_name = "out.dat";
+    if (argc == 2) {
+        write_file_name = "out.dat";
+    } else {
+        write_file_name = argv[2];
+    }
     p_write_file = fopen(write_file_name,"w");
 
         for (int i=0;i<data_length;i++) {
-            float2bin(*p_float, bin_int, bin_dec, DIGIT_INT_N, DIGIT_DEC_N);
+            float2bin(*p_float, bin_int, bin_dec, digit_int_n, digit_dec_n);
             fputs(bin_int, p_write_file);
             fputs(bin_dec, p_write_file);
             fputs("\n", p_write_file);
